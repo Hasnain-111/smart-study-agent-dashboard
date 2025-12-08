@@ -1,0 +1,28 @@
+version: 1
+
+reviewer:
+  enable_auto_review: true
+  auto_review_on:
+    - pull_request_opened
+    - pull_request_synchronized
+  instructions: |
+    Review code for:
+    - TypeScript/React bugs
+    - Component design issues
+    - Missing error boundaries
+    - AI integration mistakes
+    - Performance issues
+    - Security issues
+
+    When you suggest changes, provide:
+    - Clear reasoning
+    - Code examples
+    - Exact file + line references
+
+comments:
+  summarize_changes: true
+
+exclude:
+  - node_modules/**/*
+  - .next/**/*
+  - build/**/*
