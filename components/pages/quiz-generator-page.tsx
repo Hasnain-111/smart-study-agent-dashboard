@@ -1,37 +1,107 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Zap } from "lucide-react"
-
-const quizSamples = [
-  {
-    id: 1,
-    question: "What is the capital of France?",
-    type: "mcq",
-    options: ["London", "Paris", "Berlin", "Madrid"],
-    answer: "Paris",
-  },
-  {
-    id: 2,
-    question: "Explain the process of photosynthesis",
-    type: "short",
-    answer: "Sample answer here",
-  },
-  {
-    id: 3,
-    question: "Which element has the atomic number 6?",
-    type: "mcq",
-    options: ["Oxygen", "Carbon", "Nitrogen", "Hydrogen"],
-    answer: "Carbon",
-  },
-]
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Zap } from "lucide-react";
 
 export default function QuizGeneratorPage() {
-  const [topic, setTopic] = useState("")
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({})
+  const [topic, setTopic] = useState("");
+  const [quiz, setQuiz] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
+  const [result, setResult] = useState<any>(null);
+
+  // ---------------------------------------
+  // Generate Quiz
+  // ---------------------------------------
+  const generateQuiz = async () => {
+    if (!topic.trim()) return;
+
+    setLoading(true);
+    setResult(null); // clear old results
+
+    try {
+      const res = await fetch("/api/quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic }),
+      });
+
+      const data = await res.json();
+
+      if (data.quiz) {
+        const quizWithIds = data.quiz.map((q: any, i: number) => ({
+          id: i + 1,
+          ...q,
+        }));
+        setQuiz(quizWithIds);
+      }
+    } catch (err) {
+      console.error("Quiz error:", err);
+    }
+
+    setLoading(false);
+  };
+
+  // ---------------------------------------
+  // Evaluate Short Answer (AI)
+  // ---------------------------------------
+  const evaluateShortAnswer = async (question: string, correct: string, user: string) => {
+    const res = await fetch("/api/evaluate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, correct, user }),
+    });
+
+    return res.json();
+  };
+
+  // ---------------------------------------
+  // Submit Quiz
+  // ---------------------------------------
+  const submitQuiz = async () => {
+    let score = 0;
+    let details: any[] = [];
+
+    for (const q of quiz) {
+      const userAnswer = selectedAnswers[q.id];
+
+      if (q.type === "mcq") {
+        const correct = userAnswer === q.answer;
+
+        if (correct) score++;
+
+        details.push({
+          question: q.question,
+          correctAnswer: q.answer,
+          yourAnswer: userAnswer,
+          isCorrect: correct,
+        });
+      }
+
+      if (q.type === "short") {
+        const feedback = await evaluateShortAnswer(q.question, q.answer, userAnswer || "");
+
+        if (feedback.correct) score++;
+
+        details.push({
+          question: q.question,
+          correctAnswer: q.answer,
+          yourAnswer: userAnswer,
+          isCorrect: feedback.correct,
+          explanation: feedback.explanation,
+        });
+      }
+    }
+
+    setResult({
+      score,
+      total: quiz.length,
+      details,
+    });
+  };
 
   return (
     <div className="p-6 md:p-8 space-y-6 fade-in">
@@ -50,23 +120,30 @@ export default function QuizGeneratorPage() {
             onChange={(e) => setTopic(e.target.value)}
             className="flex-1 bg-input border-border/50"
           />
-          <Button className="bg-gradient-to-r from-primary to-accent/80 whitespace-nowrap">
+
+          <Button
+            disabled={loading}
+            onClick={generateQuiz}
+            className="bg-gradient-to-r from-primary to-accent/80 whitespace-nowrap"
+          >
             <Zap className="w-4 h-4 mr-2" />
-            Generate Quiz
+            {loading ? "Generating..." : "Generate Quiz"}
           </Button>
         </div>
       </Card>
 
       {/* Quiz Items */}
       <div className="space-y-4">
-        {quizSamples.map((item, index) => (
+        {quiz.map((item, index) => (
           <Card key={item.id} className="glass-effect border border-border/30 p-6">
             <div className="flex items-start gap-4 mb-4">
               <div className="w-8 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center text-sm font-semibold">
                 {index + 1}
               </div>
+
               <div className="flex-1">
                 <p className="text-lg font-medium mb-4">{item.question}</p>
+
                 <span className="inline-block px-2 py-1 text-xs bg-primary/20 text-primary rounded mb-4">
                   {item.type === "mcq" ? "Multiple Choice" : "Short Answer"}
                 </span>
@@ -75,10 +152,10 @@ export default function QuizGeneratorPage() {
 
             {item.type === "mcq" && (
               <div className="space-y-2 ml-12">
-                {item.options?.map((option, idx) => (
+                {item.options?.map((option: string, idx: number) => (
                   <label
                     key={idx}
-                    className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-secondary/50 transition-colors"
+                    className="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-secondary/50"
                   >
                     <input
                       type="radio"
@@ -91,7 +168,6 @@ export default function QuizGeneratorPage() {
                           [item.id]: e.target.value,
                         })
                       }
-                      className="w-4 h-4"
                     />
                     <span>{option}</span>
                   </label>
@@ -102,9 +178,15 @@ export default function QuizGeneratorPage() {
             {item.type === "short" && (
               <div className="ml-12">
                 <textarea
-                  placeholder="Type your answer here..."
-                  className="w-full bg-input border border-border/50 rounded-lg p-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50"
+                  placeholder="Type your answer..."
+                  className="w-full bg-input border border-border/50 rounded-lg p-3"
                   rows={3}
+                  onChange={(e) =>
+                    setSelectedAnswers({
+                      ...selectedAnswers,
+                      [item.id]: e.target.value,
+                    })
+                  }
                 />
               </div>
             )}
@@ -112,7 +194,42 @@ export default function QuizGeneratorPage() {
         ))}
       </div>
 
-      <Button className="w-full bg-gradient-to-r from-primary to-accent/80 py-6 text-lg">Submit Quiz</Button>
+      {/* Submit Button */}
+      {quiz.length > 0 && (
+        <Button
+          onClick={submitQuiz}
+          className="w-full bg-gradient-to-r from-primary to-accent/80 py-6 text-lg"
+        >
+          Submit Quiz
+        </Button>
+      )}
+
+      {/* RESULTS */}
+      {result && (
+        <Card className="p-6 mt-6 glass-effect border border-border/30">
+          <h2 className="text-xl font-bold mb-4">
+            Score: {result.score} / {result.total}
+          </h2>
+
+          {result.details.map((r: any, i: number) => (
+            <div key={i} className="mb-4 p-3 rounded bg-secondary/30">
+              <p><strong>Q:</strong> {r.question}</p>
+              <p><strong>Your Answer:</strong> {r.yourAnswer || "No answer"}</p>
+              <p><strong>Correct Answer:</strong> {r.correctAnswer}</p>
+
+              {r.explanation && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {r.explanation}
+                </p>
+              )}
+
+              <p className={`mt-2 font-semibold ${r.isCorrect ? "text-green-500" : "text-red-500"}`}>
+                {r.isCorrect ? "Correct ✔" : "Incorrect ✘"}
+              </p>
+            </div>
+          ))}
+        </Card>
+      )}
     </div>
-  )
+  );
 }
