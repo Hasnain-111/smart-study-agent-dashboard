@@ -10,15 +10,14 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Smart Study Agent - AI-Powered Learning",
   description: "Transform your learning with AI-powered study packs, flashcards, quizzes, and progress tracking",
-  generator: "v0.app",
   icons: {
     icon: [
       {
-        url: "/icon-light-32x32.png",
+        url: "/favicon.png",
         media: "(prefers-color-scheme: light)",
       },
       {
-        url: "/icon-dark-32x32.png",
+        url: "/favicon.png",
         media: "(prefers-color-scheme: dark)",
       },
       {
