@@ -1,28 +1,32 @@
 version: 1
 
-reviewer:
-  enable_auto_review: true
-  auto_review_on:
-    - pull_request_opened
-    - pull_request_synchronized
-  instructions: |
-    Review code for:
-    - TypeScript/React bugs
-    - Component design issues
-    - Missing error boundaries
-    - AI integration mistakes
-    - Performance issues
-    - Security issues
+reviews:
+  auto_review: true
+  review_status: true
+  comment_style: concise
 
-    When you suggest changes, provide:
-    - Clear reasoning
-    - Code examples
-    - Exact file + line references
+  rules:
+    - focus: readability
+    - focus: performance
+    - focus: security
+    - focus: best_practices
+
+  path_filters:
+    exclude:
+      - node_modules/**
+      - .next/**
+      - public/**
+      - *.lock
 
 comments:
-  summarize_changes: true
+  summary: true
+  inline: true
 
-exclude:
-  - node_modules/**/*
-  - .next/**/*
-  - build/**/*
+language_support:
+  javascript: true
+  typescript: true
+
+ai:
+  tone: constructive
+  explain_reasoning: true
+  suggest_improvements: true
