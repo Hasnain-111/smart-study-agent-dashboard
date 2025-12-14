@@ -133,147 +133,6 @@ It’s not just AI responses — it’s **guided education**.
 ---
 
 ## 🧩 Project Structure
-
-
-### Supported actions:
-- `generate_flashcards`
-- `generate_quiz`
-- `summarize_notes`
-- `study_report`
-- `recommend_learning_path`
-
-### This ensures:
-- Consistency across features  
-- Faster responses  
-- Easy scalability  
-- Clean AI orchestration  
-
----
-
-## 🔁 Guided Learning Flow
-
-StudyMate follows a simple and effective learning process:
-
-1. Enter a topic  
-2. Learn using AI-generated flashcards  
-3. Test understanding with adaptive quizzes  
-4. Review mistakes with explanations  
-5. Track progress and improve over time  
-
-This makes learning **intentional, measurable, and outcome-driven**.
-
----
-
-## 🤖 How is this different from ChatGPT?
-
-ChatGPT provides answers.  
-**StudyMate provides a learning system.**
-
-Unlike a chatbot, StudyMate:
-- Structures content into flashcards  
-- Tests understanding through quizzes  
-- Explains mistakes  
-- Tracks learning progress over time  
-
-It’s not just AI responses — it’s **guided education**.
-
----
-
-## ⚙️ Tech Stack
-
-### Frontend
-- Next.js  
-- React  
-- Tailwind CSS  
-- Recharts  
-
-### Backend
-- Next.js API Routes  
-- Central AI Orchestrator  
-- Groq AI (fast & free inference)
-
-### Optional Integrations
-- Supabase (database)  
-- Upstash Redis (background processing)
-
-### Developer Tools
-- Cline (autonomous coding agent inside VS Code)  
-- CodeRabbit (AI code reviewer for GitHub)
-
----
-
-## 🧩 Project Structure
-
-
-### Supported actions:
-- `generate_flashcards`
-- `generate_quiz`
-- `summarize_notes`
-- `study_report`
-- `recommend_learning_path`
-
-### This ensures:
-- Consistency across features  
-- Faster responses  
-- Easy scalability  
-- Clean AI orchestration  
-
----
-
-## 🔁 Guided Learning Flow
-
-StudyMate follows a simple and effective learning process:
-
-1. Enter a topic  
-2. Learn using AI-generated flashcards  
-3. Test understanding with adaptive quizzes  
-4. Review mistakes with explanations  
-5. Track progress and improve over time  
-
-This makes learning **intentional, measurable, and outcome-driven**.
-
----
-
-## 🤖 How is this different from ChatGPT?
-
-ChatGPT provides answers.  
-**StudyMate provides a learning system.**
-
-Unlike a chatbot, StudyMate:
-- Structures content into flashcards  
-- Tests understanding through quizzes  
-- Explains mistakes  
-- Tracks learning progress over time  
-
-It’s not just AI responses — it’s **guided education**.
-
----
-
-## ⚙️ Tech Stack
-
-### Frontend
-- Next.js  
-- React  
-- Tailwind CSS  
-- Recharts  
-
-### Backend
-- Next.js API Routes  
-- Central AI Orchestrator  
-- Groq AI (fast & free inference)
-
-### Optional Integrations
-- Supabase (database)  
-- Upstash Redis (background processing)
-
-### Developer Tools
-- Cline (autonomous coding agent inside VS Code)  
-- CodeRabbit (AI code reviewer for GitHub)
-
----
-
-## 🧩 Project Structure
-
 src/
 ├── app/
 │ ├── flashcards/
@@ -290,6 +149,33 @@ src/
 └── public/
 
 
+### Supported actions:
+- `generate_flashcards`
+- `generate_quiz`
+- `summarize_notes`
+- `study_report`
+- `recommend_learning_path`
+
+### This ensures:
+- Consistency across features  
+- Faster responses  
+- Easy scalability  
+- Clean AI orchestration  
+
+---
+
+## 🔁 Guided Learning Flow
+
+StudyMate follows a simple and effective learning process:
+
+1. Enter a topic  
+2. Learn using AI-generated flashcards  
+3. Test understanding with adaptive quizzes  
+4. Review mistakes with explanations  
+5. Track progress and improve over time  
+
+This makes learning **intentional, measurable, and outcome-driven**.
+
 ---
 
 ## 🛠️ Running the Project Locally
@@ -299,15 +185,7 @@ src/
 git clone https://github.com/Hasnain-111/smart-study-agent-dashboard.git
 cd smart-study-agent-dashboard
 
-
 ---
-
-## 🛠️ Running the Project Locally
-
-### 1️⃣ Clone the repository
-```bash
-git clone https://github.com/Hasnain-111/smart-study-agent-dashboard.git
-cd smart-study-agent-dashboard
 
 2️⃣ Install dependencies
 npm install
